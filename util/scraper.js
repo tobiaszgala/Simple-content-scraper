@@ -1,13 +1,18 @@
-'use strict'
-
 const request = require('request');
 const { JSDOM } = require('jsdom');
-
-const splitProperties = (props) => {
-    return props.charAt(0) === '.' ? props.slice(1, props.length).split('.') : props.split('.');
+/**
+ * Spliting "properties" and converting to Array
+ * @param  {String} props - Value from prop key
+ */
+const splitProperties = (property) => {
+    return property.charAt(0) === '.' ? property.slice(1, property.length).split('.') : property.split('.');
 }
 
-
+/**
+ * Main
+ * @param  {String} url - Address of the website
+ * @param  {Object} tags - Scraping options
+ */
 const ezscraper = (url, tags) => {
     return new Promise((resolve, reject) => {
         request(url, (error, response) => {
@@ -40,8 +45,8 @@ const ezscraper = (url, tags) => {
                                     } catch(e) {
                                         reject(`You provided invalid selector for ${originalKey}. Please check your settings.`);
                                     }
-                                // if element was selected and key is called properties
-                                } else if (el.length > 0 && key === 'properties') {
+                                // if element was selected and key is called property
+                                } else if (el.length > 0 && key === 'property') {
                                     if (tags[originalKey][key] && typeof tags[originalKey][key] === 'string'){
                                         // split properties
                                         const attr = splitProperties(tags[originalKey][key]);
@@ -59,7 +64,7 @@ const ezscraper = (url, tags) => {
                                         }
                                         data[originalKey] = arrayOfObjs;
                                     } else {
-                                        reject(`Please provide properties for ${originalKey}.`);
+                                        reject(`Please provide property for ${originalKey}.`);
                                     }
                                 }
                             }
@@ -72,10 +77,9 @@ const ezscraper = (url, tags) => {
 
                             if (el.length > 0) {
                                 const arrayOfObjs = [];
-
                                 for (let i = 0; i < el.length; i++) {
                                     const dataObj = {};
-                                    // if no properties are defined textContent is set as default
+                                    // if no property is defined textContent is set as default
                                     dataObj[key] = el[i].textContent ? el[i].textContent : reject(`Could not retrieve property for "${key}". Please check your settings`);
                                     arrayOfObjs.push(dataObj);
                                 }
@@ -84,7 +88,7 @@ const ezscraper = (url, tags) => {
                         }
                     }
                 }
-                
+                // check if data was found
                 if (Object.keys(data).length > 0) {
                     resolve(data);
                 } else {

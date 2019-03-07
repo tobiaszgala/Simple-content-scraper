@@ -69,7 +69,7 @@ const getCurrentDate = (shortFormat = false) => {
 ezscraper(url, {
     link: {
         selector: 'li.shirts a',
-        properties: 'href'
+        property: 'href'
     }
 }).then(data => {
         const shirtURL = url + data.link[0].link;
@@ -77,7 +77,7 @@ ezscraper(url, {
         ezscraper(shirtURL, {
             link: {
                 selector: 'ul.products a',
-                properties: 'href'
+                property: 'href'
             }
         }).then(data => {
             // get all links
@@ -87,11 +87,11 @@ ezscraper(url, {
                         price: 'div.shirt-details h1 span',
                         title: {
                             selector: 'div.shirt-details h1 span',
-                            properties: 'nextSibling.textContent'
+                            property: 'nextSibling.textContent'
                         },
                         img: {
                             selector: 'div.shirt-picture span img',
-                            properties: 'src'
+                            property: 'src'
                         }
                     }).then(data => { 
                         data.url = url + item.link
