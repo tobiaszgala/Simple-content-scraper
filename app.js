@@ -1,9 +1,12 @@
 const fs = require('fs');
 const json2csv = require('json2csv').Parser;
 const ezscraper = require('./util/scraper');
-
+// entry point
 const url = 'https://shirts4mike.com/';
-
+/**
+ * Error-logging function
+ * @param  {string} message - Error message
+ */
 const logError = (message) => {
     const date = getCurrentDate();
     const data = `${date} <${message}>`;
@@ -17,18 +20,22 @@ const logError = (message) => {
         }
     });
 }
-
+/**
+ * Saving object to csv file
+ * @param  {object} data - Data retrieved from web-scraping
+ */
 const csvToFile = (data) => {
     const date = getCurrentDate(true);
     const dir = './data/';
     const fileName = `${date}.csv`;
-
+    
     try {
-
+        // check if file exists
         if (!fs.existsSync(dir)) {
+            // if not create directory
             fs.mkdirSync(dir);
         }
-
+        // write data to the file
         fs.writeFile(dir + fileName, data, e => {
             if (e) {
                 logError(`Could not save data to the file: ${dir}${fileName}`);
@@ -36,12 +43,14 @@ const csvToFile = (data) => {
                 console.log(`Data has been saved to: ${dir}${fileName}`)
             }
         });
-
     } catch(e) {
         logError(`Could not save data to the file: ${dir}${fileName}`);
     }
 }
-
+/**
+ * Function generates date format 
+ * @param  {boolean} shortFormat=false - Set true to receive YYYY-MM-DD format
+ */
 const getCurrentDate = (shortFormat = false) => {
     const date = new Date();
     if (shortFormat) {
@@ -71,27 +80,7 @@ ezscraper(url, {
                 properties: 'href'
             }
         }).then(data => {
-
-            // // Example: making sychronous requests with ordered results
-            // ( async () => {
-            //     for (const item of data.link) {
-            //         const itemURL = url + item.link;
-            //         await ezscraper(itemURL, {
-            //             price: 'div.shirt-details h1 span',
-            //             name: {
-            //                 selector: 'div.shirt-details h1 span',
-            //                 properties: 'nextSibling.textContent'
-            //             },
-            //             img: {
-            //                 selector: 'div.shirt-picture span img',
-            //                 properties: 'src'
-            //             }
-            //         }).then(data => {
-            //             console.log(data);
-            //         }).catch(error => console.error(error));
-            //     }
-            // })();
-
+            // get all links
             const allLinks = data.link;
             // making parallel request with ordered results
             const arrOfPromises = allLinks.map(item => ezscraper(url + item.link, {
