@@ -1,0 +1,25 @@
+{
+  "name": "content-scraper",
+  "version": "0.0.1",
+  "description": "Simple content scraper",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobiaszgala/content-scraper.git"
+  },
+  "author": "Tobiasz Gala",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tobiaszgala/content-scraper/issues"
+  },
+  "homepage": "https://github.com/tobiaszgala/content-scraper#readme",
+  "dependencies": {
+    "jsdom": "^13.2.0",
+    "json2csv": "^4.3.5",
+    "request": "^2.88.0"
+  }
+}
