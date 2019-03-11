@@ -38,12 +38,13 @@ const ezscraper = (url, tags) => {
                             // loop over all keys in that object
                             for (let key in tags[originalKey]) {
                                 // if key is called selector
-                                if (key === 'selector') {
+                                if (key === 'selector' && tags[originalKey].hasOwnProperty('property')) {
                                     try {
                                         // grab element and copy nodelist
                                         el = [...dom.querySelectorAll(tags[originalKey][key])];
+                                        if (el.length < 1) reject(`Could not retrieve data for selector in "${originalKey}". Please check your settings.`)
                                     } catch(e) {
-                                        reject(`You provided invalid selector for ${originalKey}. Please check your settings.`);
+                                        reject(`You provided invalid selector for "${originalKey}". Please check your settings.`);
                                     }
                                 // if element was selected and key is called property
                                 } else if (el.length > 0 && key === 'property') {
@@ -64,15 +65,15 @@ const ezscraper = (url, tags) => {
                                         }
                                         data[originalKey] = arrayOfObjs;
                                     } else {
-                                        reject(`Please provide property for ${originalKey}.`);
+                                        reject(`Please provide property for "${originalKey}".`);
                                     }
-                                }
+                                } else reject('Please provide "selector" and "property" keys in options.')
                             }
                         } else {
                             try {
                                 el = dom.querySelectorAll(tags[key]);
                             } catch (e) {
-                                reject('You provided invalid selector. Please check your settings.');
+                                reject(`You provided invalid selector for "${key}". Please check your settings.`);
                             }
 
                             if (el.length > 0) {
