@@ -1,6 +1,6 @@
 const fs = require('fs');
 const json2csv = require('json2csv').Parser;
-const ezscraper = require('./util/scraper');
+const ezscraper = require('ezscraper');
 // entry point
 const url = 'https://shirts4mike.com/';
 /**
@@ -9,7 +9,7 @@ const url = 'https://shirts4mike.com/';
  */
 const logError = (message) => {
     const date = getCurrentDate();
-    const data = `${date} <${message}>`;
+    const data = `${date} <${message}>\n`;
     const fileName = 'scraper-error.log';
     console.error(message);
     fs.appendFile(fileName, data, e => {

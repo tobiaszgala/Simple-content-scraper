@@ -18,8 +18,7 @@
   },
   "homepage": "https://github.com/tobiaszgala/content-scraper#readme",
   "dependencies": {
-    "jsdom": "^13.2.0",
-    "json2csv": "^4.3.5",
-    "request": "^2.88.0"
+    "ezscraper": "0.0.6",
+    "json2csv": "^4.3.5"
   }
 }
