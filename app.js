@@ -71,61 +71,58 @@ ezscraper(url, {
         selector: 'li.shirts a',
         property: 'href'
     }
-}).then(data => {
-        const shirtURL = url + data.link[0].link;
-        // get all links to shirt detail page
-        ezscraper(shirtURL, {
-            link: {
-                selector: 'ul.products a',
-                property: 'href'
-            }
-        }).then(data => {
-            // get all links
-            const allLinks = data.link;
-            // making parallel request with ordered results
-            const arrOfPromises = allLinks.map(item => ezscraper(url + item.link, {
-                        price: 'div.shirt-details h1 span',
-                        title: {
-                            selector: 'div.shirt-details h1 span',
-                            property: 'nextSibling.textContent'
-                        },
-                        img: {
-                            selector: 'div.shirt-picture span img',
-                            property: 'src'
-                        }
-                    }).then(data => { 
-                        data.url = url + item.link
-                        return data;
-                    }));
-            
-            // run all promises
-            Promise.all(arrOfPromises)
-                .then(results => {
-                    // when all resolved
-                    // csv headers
-                    const fields = ['Title', 'Price', 'ImageURL', 'URL', 'Time'];
-                    const csvData = [];
+})
+.then(shirtURI => {
+    const shirtURL = url + shirtURI.link[0].link;
+    // get all links to shirt detail page
+    return ezscraper(shirtURL, {
+        link: {
+            selector: 'ul.products a',
+            property: 'href'
+        }
+    });
+})
+.then(allShirtLinks => {
+    // get all links
+    const allLinks = allShirtLinks.link;
+    // making parallel request with ordered results
+    return arrOfPromises = allLinks.map(item => ezscraper(url + item.link, {
+        price: 'div.shirt-details h1 span',
+        title: {
+            selector: 'div.shirt-details h1 span',
+            property: 'nextSibling.textContent'
+        },
+        img: {
+            selector: 'div.shirt-picture span img',
+            property: 'src'
+        }
+    }).then(data => {
+        data.url = url + item.link
+        return data;
+    }));
+})
+.then(arrOfPromises => Promise.all(arrOfPromises))
+.then(results => {
+    // when all resolved
+    // csv headers
+    const fields = ['Title', 'Price', 'ImageURL', 'URL', 'Time'];
+    const csvData = [];
 
-                    // formatting csv output
-                    for (const item of results) {
-                        csvData.push({ 
-                            Title : item.title[0].title,
-                            Price: item.price[0].price,
-                            ImageURL : url + item.img[0].img,
-                            URL: item.url,
-                            Time: getCurrentDate()
-                        });
-                    }
+    // formatting csv output
+    for (const item of results) {
+        csvData.push({
+            Title: item.title[0].title,
+            Price: item.price[0].price,
+            ImageURL: url + item.img[0].img,
+            URL: item.url,
+            Time: getCurrentDate()
+        });
+    }
 
-                    // parsing csv data
-                    const json2csvParser = new json2csv({fields});
-                    const csv = json2csvParser.parse(csvData);
-                    // saving csv data
-                    csvToFile(csv);
-
-                })
-                .catch(error => logError(error));
-
-        }).catch(error => logError(error));
+    // parsing csv data
+    const json2csvParser = new json2csv({ fields });
+    const csv = json2csvParser.parse(csvData);
+    // saving csv data
+    csvToFile(csv);
 
 }).catch(error => logError(error));
